@@ -4,13 +4,16 @@ import sys
 def quickstart(app):
 	'App launcher'
 	if len(sys.argv) <= 1:
-		print app.index()
+		if app.index.exposed:
+			print app.index()
 	else:
 		target = app.__getattribute__(sys.argv[1])
-		try:
+		if hasattr(target, "exposed"):
 			print target.__call__(*sys.argv[2:])
-		except AttributeError, e:
+		elif hasattr(target.index, "exposed"):
 			print target.index()
+		else:
+			raise Exception("Unknown action")
 
 def expose(method):
 	'@peachpy.expose decorator'
